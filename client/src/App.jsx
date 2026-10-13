@@ -9,6 +9,11 @@ import { Alert, Button, ButtonGroup, Col, Container, Navbar, Row, Spinner } from
 import { createDevice, deleteDevice, listDevices, updateDevice } from './api.js';
 import DeviceTable from './components/DeviceTable.jsx';
 import DeviceModal from './components/DeviceModal.jsx';
+import SplashScreen from './components/SplashScreen.jsx';
+
+// How long the launch splash stays up, and how long its fade-out takes.
+const SPLASH_MS = 5000;
+const SPLASH_FADE_MS = 400;
 
 // Status filter buttons shown above the table.
 const FILTERS = [
@@ -25,6 +30,18 @@ export default function App() {
   const [filter, setFilter] = useState('all');   // which status filter is active
   // Modal state: null = closed, {} = adding a new device, {…device} = editing that device.
   const [editing, setEditing] = useState(null);
+  // Splash: 'show' → 'fade' (last 400ms) → 'done' (unmounted). Data loads underneath it.
+  const [splash, setSplash] = useState('show');
+
+  // Hold the splash for SPLASH_MS, fade it out, then unmount it.
+  useEffect(() => {
+    const fade = setTimeout(() => setSplash('fade'), SPLASH_MS);
+    const done = setTimeout(() => setSplash('done'), SPLASH_MS + SPLASH_FADE_MS);
+    return () => {
+      clearTimeout(fade);
+      clearTimeout(done);
+    };
+  }, []);
 
   // On first render, load all devices from the API (the "retrieve all records" step).
   useEffect(() => {
@@ -82,6 +99,9 @@ export default function App() {
 
   return (
     <>
+      {/* Launch screen overlay; sits above everything until it fades out */}
+      {splash !== 'done' && <SplashScreen fading={splash === 'fade'} duration={SPLASH_MS} />}
+
       {/* Top bar: brand + the only entry point for adding a device */}
       <Navbar data-bs-theme="dark" className="app-navbar mb-4 py-3">
         <Container>
