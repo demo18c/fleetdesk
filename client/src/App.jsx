@@ -1,0 +1,183 @@
+// ============================================================
+// client/src/App.jsx — root component and single source of truth
+// Owns all state (device list, loading, error, filter, modal) and the
+// four CRUD handlers. Child components are presentational and get
+// data + callbacks via props.
+// ============================================================
+import { useEffect, useState } from 'react';
+import { Alert, Button, ButtonGroup, Col, Container, Navbar, Row, Spinner } from 'react-bootstrap';
+import { createDevice, deleteDevice, listDevices, updateDevice } from './api.js';
+import DeviceTable from './components/DeviceTable.jsx';
+import DeviceModal from './components/DeviceModal.jsx';
+
+// Status filter buttons shown above the table.
+const FILTERS = [
+  { key: 'all', label: 'All' },
+  { key: 'pending', label: 'Pending' },
+  { key: 'enrolled', label: 'Enrolled' },
+  { key: 'retired', label: 'Retired' },
+];
+
+export default function App() {
+  const [devices, setDevices] = useState([]);    // the list from the server
+  const [loading, setLoading] = useState(true);  // true until the first fetch resolves
+  const [error, setError] = useState('');        // last error message, shown in an Alert
+  const [filter, setFilter] = useState('all');   // which status filter is active
+  // Modal state: null = closed, {} = adding a new device, {…device} = editing that device.
+  const [editing, setEditing] = useState(null);
+
+  // On first render, load all devices from the API (the "retrieve all records" step).
+  useEffect(() => {
+    listDevices()
+      .then(setDevices)
+      .catch((e) => setError(e.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Wrap any async action: clear the old error, run it, capture a new error if thrown.
+  // Keeps the try/catch out of each handler below.
+  const run = async (fn) => {
+    setError('');
+    try {
+      await fn();
+    } catch (e) {
+      setError(e.message);
+    }
+  };
+
+  // Called by DeviceModal on submit. If we're editing an existing device (has _id)
+  // send a PUT and swap it in the list; otherwise POST and prepend the new one.
+  // Local state is updated from the server's response, so no refetch is needed.
+  const handleSave = (form) =>
+    run(async () => {
+      if (editing?._id) {
+        const updated = await updateDevice(editing._id, form);
+        setDevices((d) => d.map((x) => (x._id === updated._id ? updated : x)));
+      } else {
+        const created = await createDevice(form);
+        setDevices((d) => [created, ...d]);
+      }
+      setEditing(null);
+    });
+
+  // Inline status change from the dropdown in the table. Sends only { status }.
+  const handleStatus = (device, status) =>
+    run(async () => {
+      const updated = await updateDevice(device._id, { status });
+      setDevices((d) => d.map((x) => (x._id === updated._id ? updated : x)));
+    });
+
+  // Delete with a native confirm dialog, then remove from local state.
+  const handleDelete = (device) => {
+    if (!window.confirm(`Remove "${device.name}" (${device.serial}) from the fleet?`)) return;
+    run(async () => {
+      await deleteDevice(device._id);
+      setDevices((d) => d.filter((x) => x._id !== device._id));
+    });
+  };
+
+  // Derived values: the filtered list for the table, and per-status counts for the cards.
+  const visible = filter === 'all' ? devices : devices.filter((d) => d.status === filter);
+  const count = (s) => devices.filter((d) => d.status === s).length;
+
+  return (
+    <>
+      {/* Top bar: brand + the only entry point for adding a device */}
+      <Navbar data-bs-theme="dark" className="app-navbar mb-4 py-3">
+        <Container>
+          <Navbar.Brand className="fw-bold d-flex align-items-center">
+            <span className="brand-dot" />
+            FleetDesk
+          </Navbar.Brand>
+          <Button variant="primary" onClick={() => setEditing({})}>
+            + Add device
+          </Button>
+        </Container>
+      </Navbar>
+
+      <Container>
+        {/* Summary cards: totals per status, derived from the loaded list */}
+        <Row className="g-3 mb-4">
+          <Col xs={6} md={3}>
+            <div className="stat-card">
+              <div className="label">Total devices</div>
+              <div className="value">{devices.length}</div>
+            </div>
+          </Col>
+          <Col xs={6} md={3}>
+            <div className="stat-card pending">
+              <div className="label">Pending</div>
+              <div className="value">{count('pending')}</div>
+            </div>
+          </Col>
+          <Col xs={6} md={3}>
+            <div className="stat-card enrolled">
+              <div className="label">Enrolled</div>
+              <div className="value">{count('enrolled')}</div>
+            </div>
+          </Col>
+          <Col xs={6} md={3}>
+            <div className="stat-card retired">
+              <div className="label">Retired</div>
+              <div className="value">{count('retired')}</div>
+            </div>
+          </Col>
+        </Row>
+
+        {/* Filter buttons on the left, count of visible rows on the right */}
+        <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <ButtonGroup className="filter-group">
+            {FILTERS.map((f) => (
+              <Button
+                key={f.key}
+                variant="light"
+                active={filter === f.key}
+                onClick={() => setFilter(f.key)}
+              >
+                {f.label}
+              </Button>
+            ))}
+          </ButtonGroup>
+          <small className="text-secondary">
+            Showing {visible.length} of {devices.length}
+          </small>
+        </div>
+
+        {/* Any API error surfaces here; dismissible */}
+        {error && (
+          <Alert variant="danger" dismissible onClose={() => setError('')}>
+            {error}
+          </Alert>
+        )}
+
+        {/* Spinner during the initial load, then the table */}
+        {loading ? (
+          <div className="text-center py-5">
+            <Spinner animation="border" />
+          </div>
+        ) : (
+          <div className="task-card">
+            <DeviceTable
+              devices={visible}
+              onEdit={setEditing}
+              onDelete={handleDelete}
+              onStatus={handleStatus}
+            />
+          </div>
+        )}
+
+        <footer className="app-footer">
+          FleetDesk · MongoDB · Express · React · Node
+        </footer>
+      </Container>
+
+      {/* One modal handles both "add" and "edit"; `device` decides which */}
+      <DeviceModal
+        show={editing !== null}
+        device={editing}
+        onHide={() => setEditing(null)}
+        onSave={handleSave}
+      />
+    </>
+  );
+}

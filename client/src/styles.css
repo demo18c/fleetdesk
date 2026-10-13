@@ -1,0 +1,205 @@
+/* ============================================================
+   client/src/styles.css — theme overrides on top of Bootstrap 5
+   Bootstrap exposes its palette as CSS variables, so we can give the
+   whole app a modern indigo/slate look without ejecting from
+   react-bootstrap or writing component-level CSS.
+   ============================================================ */
+
+:root {
+  /* Brand accent: indigo instead of Bootstrap's default blue */
+  --bs-primary: #4f46e5;
+  --bs-primary-rgb: 79, 70, 229;
+  --bs-link-color: #4f46e5;
+  --bs-link-hover-color: #4338ca;
+
+  /* Slate neutrals for text and borders */
+  --bs-body-color: #1e293b;
+  --bs-body-bg: #f1f5f9;
+  --bs-secondary-color: #64748b;
+  --bs-border-color: #e2e8f0;
+
+  --bs-body-font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Softer corners everywhere */
+  --bs-border-radius: 0.625rem;
+  --bs-border-radius-sm: 0.5rem;
+  --bs-border-radius-lg: 0.875rem;
+}
+
+body {
+  background: var(--bs-body-bg);
+  min-height: 100vh;
+}
+
+/* --- Buttons: make the primary button pick up the indigo accent --- */
+.btn-primary {
+  --bs-btn-bg: #4f46e5;
+  --bs-btn-border-color: #4f46e5;
+  --bs-btn-hover-bg: #4338ca;
+  --bs-btn-hover-border-color: #4338ca;
+  --bs-btn-active-bg: #3730a3;
+  --bs-btn-active-border-color: #3730a3;
+  --bs-btn-focus-shadow-rgb: 79, 70, 229;
+  font-weight: 600;
+}
+.btn-outline-primary {
+  --bs-btn-color: #4f46e5;
+  --bs-btn-border-color: #c7d2fe;
+  --bs-btn-hover-bg: #eef2ff;
+  --bs-btn-hover-border-color: #4f46e5;
+  --bs-btn-hover-color: #4338ca;
+  --bs-btn-active-bg: #4f46e5;
+  --bs-btn-active-border-color: #4f46e5;
+}
+.btn-outline-danger {
+  --bs-btn-border-color: #fecaca;
+  --bs-btn-hover-bg: #fef2f2;
+  --bs-btn-hover-color: #b91c1c;
+  --bs-btn-hover-border-color: #dc2626;
+}
+
+/* --- Filter pills: segmented control look --- */
+.filter-group .btn {
+  --bs-btn-color: #475569;
+  --bs-btn-bg: #fff;
+  --bs-btn-border-color: #e2e8f0;
+  --bs-btn-hover-bg: #f8fafc;
+  --bs-btn-hover-color: #1e293b;
+  --bs-btn-hover-border-color: #e2e8f0;
+  font-weight: 500;
+}
+.filter-group .btn.active,
+.filter-group .btn-secondary {
+  --bs-btn-bg: #4f46e5;
+  --bs-btn-border-color: #4f46e5;
+  --bs-btn-color: #fff;
+  --bs-btn-hover-bg: #4338ca;
+  --bs-btn-hover-border-color: #4338ca;
+  --bs-btn-active-bg: #4f46e5;
+  --bs-btn-active-border-color: #4f46e5;
+}
+
+/* --- Top bar: dark slate gradient --- */
+.app-navbar {
+  background: linear-gradient(90deg, #0f172a 0%, #1e1b4b 100%);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 16px rgba(15, 23, 42, 0.25);
+}
+.app-navbar .navbar-brand {
+  letter-spacing: -0.01em;
+  font-size: 1.25rem;
+}
+.brand-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #818cf8;
+  margin-right: 0.5rem;
+  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.25);
+}
+
+/* --- Stat cards above the table --- */
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  padding: 0.875rem 1rem;
+}
+.stat-card .label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bs-secondary-color);
+}
+.stat-card .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.stat-card.pending .value { color: #f59e0b; }
+.stat-card.enrolled .value { color: #10b981; }
+.stat-card.retired .value { color: #94a3b8; }
+
+/* --- Table: wrapped in a white card with rounded corners --- */
+.task-card {
+  background: #fff;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius-lg);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.05);
+}
+.task-card .table {
+  margin-bottom: 0;
+  --bs-table-hover-bg: #f8fafc;
+}
+.task-card thead th {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--bs-border-color);
+  padding: 0.75rem 1rem;
+}
+.task-card tbody td {
+  padding: 0.875rem 1rem;
+  border-color: #f1f5f9;
+}
+.task-card tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* --- Platform badges: soft tinted pills instead of solid blocks --- */
+.badge.platform {
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+  border-radius: 999px;
+}
+.badge.platform-android { background: #dcfce7; color: #15803d; }
+.badge.platform-ios { background: #e0e7ff; color: #4338ca; }
+.badge.platform-wearos { background: #fae8ff; color: #a21caf; }
+.badge.platform-windows { background: #dbeafe; color: #1d4ed8; }
+
+/* --- Inline status select: tinted by value --- */
+.status-select {
+  font-weight: 500;
+  border-radius: 999px;
+  padding-left: 0.9rem;
+}
+.status-select.pending { background-color: #fef3c7; border-color: #fde68a; color: #92400e; }
+.status-select.enrolled { background-color: #d1fae5; border-color: #a7f3d0; color: #047857; }
+.status-select.retired { background-color: #f1f5f9; border-color: #e2e8f0; color: #64748b; }
+
+/* --- Modal polish --- */
+.modal-content {
+  border: 0;
+  border-radius: var(--bs-border-radius-lg);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.25);
+}
+.modal-header { border-bottom-color: #f1f5f9; }
+.modal-footer { border-top-color: #f1f5f9; }
+.form-control:focus,
+.form-select:focus {
+  border-color: #a5b4fc;
+  box-shadow: 0 0 0 0.25rem rgba(79, 70, 229, 0.15);
+}
+
+/* --- Empty state --- */
+.empty-state {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--bs-secondary-color);
+}
+.empty-state .icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.app-footer {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  padding: 2rem 0 1.5rem;
+  text-align: center;
+}
