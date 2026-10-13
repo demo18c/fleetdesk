@@ -5,7 +5,7 @@ List, add, edit, and remove managed devices from a single page.
 
 | | |
 |---|---|
-| **Live app** | https://SITE_NAME |
+| **Live app** | https://32-198-178-230.sslip.io |
 | **Source** | https://github.com/demo18c/fleetdesk |
 | **User stories** | [docs/user-stories.md](docs/user-stories.md) |
 
@@ -70,7 +70,7 @@ The server only accepts requests from the web app's own origin:
 app.use(cors({ origin: process.env.CLIENT_ORIGIN }));
 ```
 
-`CLIENT_ORIGIN` is `http://localhost:5173` in development and `https://SITE_NAME` in production.
+`CLIENT_ORIGIN` is `http://localhost:5173` in development and `https://32-198-178-230.sslip.io` in production.
 
 ## Database
 
