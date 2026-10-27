@@ -1,8 +1,13 @@
-Drop the submission screenshots here with these exact names (the main README links to them):
+# Submission screenshots
 
-- app-list.png        — FleetDesk device list with several devices (https://fleetdesk.quiet-root.com)
-- app-edit.png        — Edit modal open with a pre-filled form
-- atlas-devices.png   — Atlas Data Explorer: fleetdesk > devices, same documents as app-list
-- ec2-instance.png    — EC2 console showing the running instance and Elastic IP 32.198.178.230
-- actions-run.png     — GitHub Actions: a green "Deploy to EC2" run
-- route53-record.png  — Route 53: the fleetdesk.quiet-root.com A record in the quiet-root.com zone
+Captured October 27, 2026:
+
+- `app-list.jpg`: current public application with all 15 records, search and author credit.
+- `app-edit.jpg`: current pre-filled edit form.
+- `app-search.jpg`: mixed-case serial search returning one device.
+- `atlas-devices.jpg`: real MongoDB Atlas Data Explorer showing `fleetdesk.devices` and 15 records.
+- `actions-run.jpg`: successful build and deployment of search/unique-serial changes.
+
+Original October 12 PNGs are preserved in `../archive/2026-10-12/` and at their original paths. The README and submission guide use the current JPGs.
+
+Pending AWS sign-in: EC2 instance console screenshot and optional Route 53 record screenshot. Do not represent these as captured until the actual consoles can be inspected.

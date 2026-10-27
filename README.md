@@ -1,7 +1,11 @@
 # FleetDesk
 
 A device fleet inventory built on the **MERN** stack: **M**ongoDB Atlas, **E**xpress, **R**eact, **N**ode.
-List, add, edit, and remove managed devices from a single page.
+Created by **Rashad Abdulbarr** for **ITMD 504 — Programming and Application Foundations**.
+
+List, search, add, edit, and remove managed devices from a single page.
+
+[Assignment requirements and evidence](docs/submission.md) · [Verification results](docs/verification.md)
 
 | | |
 |---|---|
@@ -9,7 +13,7 @@ List, add, edit, and remove managed devices from a single page.
 | **Source** | https://github.com/demo18c/fleetdesk |
 | **User stories** | [docs/user-stories.md](docs/user-stories.md) |
 
-![FleetDesk device list](docs/screenshots/app-list.png)
+![FleetDesk device list](docs/screenshots/app-list.jpg)
 
 ## Frameworks and services
 
@@ -47,14 +51,16 @@ Base path: `/api/devices`
 | PUT | `/api/devices/:id` | any subset of the fields above | `200` updated device, `404` if not found |
 | DELETE | `/api/devices/:id` | — | `204`, `404` if not found |
 
-Validation errors return `400 { "error": "..." }`.
+Validation errors return `400 { "error": "..." }`. Duplicate serials on creation or update return `409` with a clear message. A database unique index enforces this even for concurrent requests. The server waits for index initialization before accepting traffic.
+
+Search is case-insensitive, ignores surrounding whitespace, and matches device name, serial, assignee, platform (including “Wear OS”), or OS version. It combines with the existing status filters and does not modify stored records.
 
 **Device schema** (`server/models/Device.js`)
 
 | Field | Type | Rules |
 |---|---|---|
 | name | String | required, ≤ 80 chars |
-| serial | String | required, stored uppercase |
+| serial | String | required, trimmed, stored uppercase, unique |
 | platform | enum | `android` · `ios` · `wearos` · `windows` |
 | osVersion | String | optional |
 | status | enum | `pending` · `enrolled` · `retired` |
@@ -74,7 +80,7 @@ app.use(cors({ origin: process.env.CLIENT_ORIGIN }));
 
 ## Database
 
-![Atlas devices collection](docs/screenshots/atlas-devices.png)
+![Atlas devices collection](docs/screenshots/atlas-devices.jpg)
 
 MongoDB Atlas, cluster `fleetdesk`, database `fleetdesk`, collection `devices`. The documents above
 correspond to the rows shown in the app screenshot.
@@ -103,7 +109,7 @@ Open http://localhost:5173.
 
 First-time server setup is scripted in `deploy/setup-ec2.sh`.
 
-![EC2 instance](docs/screenshots/ec2-instance.png)
+EC2 console screenshot is pending AWS sign-in; see the [submission evidence](docs/submission.md).
 
 ### Continuous deployment
 

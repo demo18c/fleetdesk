@@ -229,6 +229,7 @@ export default function App() {
 
       {/* One modal handles both "add" and "edit"; `device` decides which */}
       <DeviceModal
+        error={error}
         show={editing !== null}
         device={editing}
         onHide={() => setEditing(null)}

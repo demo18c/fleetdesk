@@ -4,7 +4,7 @@
 // and the form is pre-filled; otherwise it's a blank "add device" form.
 // ============================================================
 import { useEffect, useState } from 'react';
-import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, Modal, Row } from 'react-bootstrap';
 
 // Default values for a brand-new device (matches the schema defaults on the server).
 const EMPTY = {
@@ -22,7 +22,7 @@ const EMPTY = {
 //   device – null | {} | device object (see App.jsx `editing` state)
 //   onHide – close without saving
 //   onSave – (formValues) => void, App decides whether that's a POST or PUT
-export default function DeviceModal({ show, device, onHide, onSave }) {
+export default function DeviceModal({ show, device, onHide, onSave, error }) {
   const [form, setForm] = useState(EMPTY);           // controlled form values
   const [validated, setValidated] = useState(false); // turns on Bootstrap's red validation styling
   const isEdit = Boolean(device?._id);
@@ -65,6 +65,7 @@ export default function DeviceModal({ show, device, onHide, onSave }) {
           <Modal.Title>{isEdit ? 'Edit device' : 'Add device'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {error && <Alert variant="danger" role="alert">{error}</Alert>}
           <Row>
             <Form.Group as={Col} md={7} className="mb-3" controlId="name">
               <Form.Label>Device name</Form.Label>

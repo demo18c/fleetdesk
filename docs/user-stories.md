@@ -14,6 +14,9 @@ maps to a feature in the app and to an API endpoint on the server.
 | US-07 | fleet admin | use the app from a phone or tablet in the field | I can update a device's status while standing next to it | Layout is responsive (Bootstrap grid); the table scrolls horizontally on narrow screens |
 | US-08 | fleet admin | know when something goes wrong | I don't assume a change saved when it didn't | API errors (validation, network) surface in a dismissible alert at the top of the page |
 
+| US-09 | fleet admin | search by name, serial, assignee, platform, or OS | I can quickly locate a device | Search ignores case and surrounding whitespace; combines with status filters; clearing it restores the status-filtered list |
+| US-10 | fleet admin | prevent duplicate serial numbers | one physical device has one inventory record | Serial values are trimmed and uppercased; a MongoDB unique index rejects conflicting POST and PUT requests with HTTP 409; existing records stay unchanged |
+
 ## Non-functional requirements
 
 - Hosted at a public HTTPS URL on AWS (EC2 + Caddy + Let's Encrypt).
