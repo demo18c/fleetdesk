@@ -209,7 +209,8 @@ export default function App() {
         )}
 
         <footer className="app-footer">
-          FleetDesk · MongoDB · Express · React · Node
+          <div>Created by Rashad Abdulbarr</div>
+          <div>FleetDesk · MongoDB · Express · React · Node</div>
         </footer>
       </Container>
 
