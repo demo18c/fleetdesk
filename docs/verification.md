@@ -13,4 +13,8 @@
 - The database count remained 15 and the conflicting update left the original serial unchanged.
 - Atlas screenshot was captured from the signed-in Data Explorer, showing the same 15 inventory records.
 
-These checks do not assert full production security or comprehensive CRUD regression coverage. No original inventory record was deleted or changed during the duplicate tests. AWS console evidence is pending sign-in as described in the submission guide.
+These checks do not assert full production security or comprehensive CRUD regression coverage. No original inventory record was deleted or changed during the duplicate tests. AWS console screenshots confirm a running FleetDesk instance and the matching Route 53 A record.
+
+- Final form-feedback build and deployment passed: [run 40514676294](https://github.com/demo18c/fleetdesk/actions/runs/40514676294).
+- Live add-device form displayed the HTTP 409 duplicate message inside the modal; canceled afterward without creating a record.
+- Search also verified assignee `warehouse`, platform `wear os`, device name `iphone`, and a no-match query.

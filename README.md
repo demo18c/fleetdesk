@@ -109,7 +109,9 @@ Open http://localhost:5173.
 
 First-time server setup is scripted in `deploy/setup-ec2.sh`.
 
-EC2 console screenshot is pending AWS sign-in; see the [submission evidence](docs/submission.md).
+![Running EC2 instance](docs/screenshots/ec2-instance.jpg)
+
+![FleetDesk Route 53 record](docs/screenshots/route53-record.jpg)
 
 ### Continuous deployment
 
@@ -120,7 +122,7 @@ Every push to `main` triggers `.github/workflows/deploy.yml`:
    and runs `deploy/deploy.sh`, which pulls `main`, installs dependencies, rebuilds the React app,
    and restarts the PM2 process.
 
-![GitHub Actions deploy run](docs/screenshots/actions-run.png)
+![GitHub Actions deploy run](docs/screenshots/actions-run.jpg)
 
 ### Secrets
 

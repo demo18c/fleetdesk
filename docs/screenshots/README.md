@@ -10,4 +10,8 @@ Captured October 27, 2026:
 
 Original October 12 PNGs are preserved in `../archive/2026-10-12/` and at their original paths. The README and submission guide use the current JPGs.
 
-Pending AWS sign-in: EC2 instance console screenshot and optional Route 53 record screenshot. Do not represent these as captured until the actual consoles can be inspected.
+Additional screenshots captured after AWS sign-in:
+
+- `ec2-instance.jpg`: FleetDesk instance Running, t3.small, Elastic IP 32.198.178.230.
+- `route53-record.jpg`: fleetdesk.quiet-root.com A record pointing to that Elastic IP, TTL 300.
+- `duplicate-serial.jpg`: real duplicate serial rejection inside the add-device form.

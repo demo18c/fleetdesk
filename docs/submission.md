@@ -64,8 +64,16 @@ Match `Galaxy Watch7` / `RFAW70Q3P1R`, `Galaxy XCover6 Pro` / `R58W40QV8XK`, and
 5. To test duplicate prevention without creating a record, use Add device with a name and existing serial `RFAW70Q3P1R`. The form should explain that the serial already exists. Cancel afterward.
 6. For CRUD demonstration, create a clearly labeled demo device with a new serial, edit it, and refresh to confirm persistence. Keep demonstration records separate from the original inventory.
 
-## Evidence still requiring AWS access
+## Cloud hosting and DNS evidence
 
-An EC2 console screenshot and optional Route 53 DNS screenshot are pending AWS sign-in. AWS CLI credentials were expired and the browser presented its sign-in page on October 27. These screenshots have not been fabricated or represented as captured. Cloud deployment is independently evidenced by the working public app and successful SSH deployment workflow. Keep the app running through the instructor's grading period; the supplied transcript does not specify an exact duration.
+The AWS console confirms the FleetDesk `t3.small` instance is Running with Elastic IP `32.198.178.230`. Route 53 has a simple A record for `fleetdesk.quiet-root.com` pointing to that same address, with TTL 300 seconds.
+
+![Running FleetDesk EC2 instance](screenshots/ec2-instance.jpg)
+
+![FleetDesk DNS record pointing to its Elastic IP](screenshots/route53-record.jpg)
+
+![Duplicate serial warning inside the add-device form](screenshots/duplicate-serial.jpg)
+
+Keep the app running through the instructor's grading period; the supplied transcript does not specify an exact duration.
 
 See [verification results](verification.md) for completed checks.
