@@ -5,7 +5,7 @@
 // data + callbacks via props.
 // ============================================================
 import { useEffect, useState } from 'react';
-import { Alert, Button, ButtonGroup, Col, Container, Navbar, Row, Spinner } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Col, Container, Form, Navbar, Row, Spinner } from 'react-bootstrap';
 import { createDevice, deleteDevice, listDevices, updateDevice } from './api.js';
 import DeviceTable from './components/DeviceTable.jsx';
 import DeviceModal from './components/DeviceModal.jsx';
@@ -46,6 +46,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);  // true until the first fetch resolves
   const [error, setError] = useState('');        // last error message, shown in an Alert
   const [filter, setFilter] = useState('all');   // which status filter is active
+  const [search, setSearch] = useState('');
   // Modal state: null = closed, {} = adding a new device, {…device} = editing that device.
   const [editing, setEditing] = useState(null);
   // Splash: 'show' → 'fade' (last 400ms) → 'done' (unmounted). Data loads underneath it.
@@ -116,7 +117,13 @@ export default function App() {
   };
 
   // Derived values: the filtered list for the table, and per-status counts for the cards.
-  const visible = filter === 'all' ? devices : devices.filter((d) => d.status === filter);
+  const query = search.trim().toLowerCase();
+  const visible = devices.filter((device) =>
+    (filter === 'all' || device.status === filter) &&
+    (!query || [device.name, device.serial, device.assignedTo, device.platform,
+      device.platform === 'wearos' ? 'Wear OS' : device.platform, device.osVersion]
+      .some((value) => String(value || '').toLowerCase().includes(query)))
+  );
   const count = (s) => devices.filter((d) => d.status === s).length;
 
   return (
@@ -165,6 +172,12 @@ export default function App() {
             </div>
           </Col>
         </Row>
+
+        <Form.Group className="mb-3" controlId="device-search">
+          <Form.Label>Search devices</Form.Label>
+          <Form.Control type="search" placeholder="Search name, serial, assignee, platform, or OS"
+            value={search} onChange={(event) => setSearch(event.target.value)} />
+        </Form.Group>
 
         {/* Filter buttons on the left, count of visible rows on the right */}
         <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">

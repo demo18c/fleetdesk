@@ -11,7 +11,7 @@ import mongoose from 'mongoose';
 const deviceSchema = new mongoose.Schema(
   {
     name: { type: String, required: [true, 'Device name is required'], trim: true, maxlength: 80 },
-    serial: { type: String, required: [true, 'Serial number is required'], trim: true, uppercase: true, maxlength: 64 },
+    serial: { type: String, required: [true, 'Serial number is required'], trim: true, uppercase: true, maxlength: 64, unique: true },
     platform: { type: String, enum: ['android', 'ios', 'wearos', 'windows'], default: 'android' },
     osVersion: { type: String, trim: true, maxlength: 32, default: '' },
     status: { type: String, enum: ['pending', 'enrolled', 'retired'], default: 'pending' },

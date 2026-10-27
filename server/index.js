@@ -51,6 +51,9 @@ if (isProd) {
 // Final middleware: any error passed to next(err) ends up here and is
 // returned as JSON with a consistent shape { error: "..." }.
 app.use((err, _req, res, _next) => {
+  if (err.code === 11000 && (err.keyPattern?.serial || err.keyValue?.serial)) {
+    return res.status(409).json({ error: 'A device with this serial number already exists. Edit the existing device or use a different serial.' });
+  }
   console.error(err);
   res.status(err.status || 500).json({ error: err.message || 'Server error' });
 });
@@ -61,7 +64,9 @@ app.use((err, _req, res, _next) => {
 // database is reachable. If the connection fails, exit so PM2 restarts us.
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
+    // Ensure the unique serial index exists before accepting writes.
+    await mongoose.model('Device').init();
     console.log('MongoDB connected');
     app.listen(PORT, () => console.log(`API listening on http://localhost:${PORT}`));
   })
