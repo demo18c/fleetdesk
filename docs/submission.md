@@ -57,7 +57,7 @@ Match `Galaxy Watch7` / `RFAW70Q3P1R`, `Galaxy XCover6 Pro` / `R58W40QV8XK`, and
 
 ## Reviewer walkthrough
 
-1. Open the public app; the launch screen clears automatically.
+1. Open the public app and wait for the inventory to load.
 2. Search for `RFAW70Q3P1R`; one Galaxy Watch7 should appear. Search ignores letter case.
 3. Choose Enrolled while that search is active; no records match. Return to All and clear search to restore the 15-device view.
 4. Open Edit to inspect the pre-filled fields. Cancel leaves data unchanged.

@@ -9,29 +9,6 @@ import { Alert, Button, ButtonGroup, Col, Container, Form, Navbar, Row, Spinner 
 import { createDevice, deleteDevice, listDevices, updateDevice } from './api.js';
 import DeviceTable from './components/DeviceTable.jsx';
 import DeviceModal from './components/DeviceModal.jsx';
-import SplashScreen from './components/SplashScreen.jsx';
-
-// How long the launch splash stays up, and how long its fade-out takes.
-const SPLASH_MS = 5000;
-const SPLASH_FADE_MS = 400;
-const SPLASH_KEY = 'fleetdesk:splashSeen';
-
-// sessionStorage can throw in private windows or with storage blocked, so both
-// helpers are wrapped: if it fails we just show the splash, which is harmless.
-const hasSeenSplash = () => {
-  try {
-    return sessionStorage.getItem(SPLASH_KEY) === '1';
-  } catch {
-    return false;
-  }
-};
-const markSplashSeen = () => {
-  try {
-    sessionStorage.setItem(SPLASH_KEY, '1');
-  } catch {
-    /* ignore */
-  }
-};
 
 // Status filter buttons shown above the table.
 const FILTERS = [
@@ -49,22 +26,6 @@ export default function App() {
   const [search, setSearch] = useState('');
   // Modal state: null = closed, {} = adding a new device, {…device} = editing that device.
   const [editing, setEditing] = useState(null);
-  // Splash: 'show' → 'fade' (last 400ms) → 'done' (unmounted). Data loads underneath it.
-  // Shown once per browser session: a flag in sessionStorage skips it on refresh and
-  // on later visits in the same tab. Closing the tab clears it, so a fresh visit sees it again.
-  const [splash, setSplash] = useState(() => (hasSeenSplash() ? 'done' : 'show'));
-
-  // Hold the splash for SPLASH_MS, fade it out, then unmount it.
-  useEffect(() => {
-    if (splash === 'done') return undefined;
-    markSplashSeen();
-    const fade = setTimeout(() => setSplash('fade'), SPLASH_MS);
-    const done = setTimeout(() => setSplash('done'), SPLASH_MS + SPLASH_FADE_MS);
-    return () => {
-      clearTimeout(fade);
-      clearTimeout(done);
-    };
-  }, []);
 
   // On first render, load all devices from the API (the "retrieve all records" step).
   useEffect(() => {
@@ -128,9 +89,6 @@ export default function App() {
 
   return (
     <>
-      {/* Launch screen overlay; sits above everything until it fades out */}
-      {splash !== 'done' && <SplashScreen fading={splash === 'fade'} duration={SPLASH_MS} />}
-
       {/* Top bar: brand + the only entry point for adding a device */}
       <Navbar data-bs-theme="dark" className="app-navbar mb-4 py-3">
         <Container>
