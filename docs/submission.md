@@ -35,7 +35,7 @@ Serials are trimmed and converted to uppercase before storage. A unique database
 
 Search filters loaded records without changing the database, ignores case and surrounding whitespace, and works together with the status filter. It searches name, serial, assignee, platform and OS version.
 
-CORS uses `CLIENT_ORIGIN`; database credentials stay in environment files outside source control. CORS is a browser policy, not authentication. This is a public coursework demonstration with public inventory editing, not a production MDM service or a device-control agent.
+Device inventory and editing require a shared access key. The reviewer receives it privately and enters it on the FleetDesk page. Express checks the key on every device API call. The server stores its copy in the deployment environment, and the browser keeps the key in memory until the page reloads.
 
 ## Application and database evidence
 
@@ -57,12 +57,12 @@ Match `Galaxy Watch7` / `RFAW70Q3P1R`, `Galaxy XCover6 Pro` / `R58W40QV8XK`, and
 
 ## Reviewer walkthrough
 
-1. Open the public app and wait for the inventory to load.
+1. Open the public app, enter the access key supplied with the submission, and select Unlock inventory.
 2. Search for `RFAW70Q3P1R`; one Galaxy Watch7 should appear. Search ignores letter case.
 3. Choose Enrolled while that search is active; no records match. Return to All and clear search to restore the 15-device view.
 4. Open Edit to inspect the pre-filled fields. Cancel leaves data unchanged.
 5. To test duplicate prevention without creating a record, use Add device with a name and existing serial `RFAW70Q3P1R`. The form should explain that the serial already exists. Cancel afterward.
-6. For CRUD demonstration, create a clearly labeled demo device with a new serial, edit it, and refresh to confirm persistence. Keep demonstration records separate from the original inventory.
+6. For CRUD demonstration, create a clearly labeled demo device with a new serial, edit it, then refresh and unlock again to confirm persistence. Keep demonstration records separate from the original inventory.
 
 ## Cloud hosting and DNS evidence
 

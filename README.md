@@ -145,3 +145,7 @@ deploy/            Caddyfile, PM2 config, EC2 setup + deploy scripts
 .github/workflows/ CI/CD pipeline
 docs/              user stories, screenshots
 ```
+
+### Inventory access
+
+Set `FLEETDESK_ACCESS_KEY` in the root `.env` to a random key generated with `openssl rand -hex 32`. Share it privately with authorized reviewers. Enter it on the FleetDesk page or send it as an `Authorization: Bearer` header with device API requests. Reloading the page clears the browser’s copy.

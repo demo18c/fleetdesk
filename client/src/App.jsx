@@ -4,8 +4,8 @@
 // four CRUD handlers. Child components are presentational and get
 // data + callbacks via props.
 // ============================================================
-import { useEffect, useState } from 'react';
-import { Alert, Button, ButtonGroup, Col, Container, Form, Navbar, Row, Spinner } from 'react-bootstrap';
+import { useState } from 'react';
+import { Alert, Button, ButtonGroup, Col, Container, Form, Navbar, Row } from 'react-bootstrap';
 import { createDevice, deleteDevice, listDevices, updateDevice } from './api.js';
 import DeviceTable from './components/DeviceTable.jsx';
 import DeviceModal from './components/DeviceModal.jsx';
@@ -20,20 +20,30 @@ const FILTERS = [
 
 export default function App() {
   const [devices, setDevices] = useState([]);    // the list from the server
-  const [loading, setLoading] = useState(true);  // true until the first fetch resolves
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');        // last error message, shown in an Alert
   const [filter, setFilter] = useState('all');   // which status filter is active
   const [search, setSearch] = useState('');
+  const [key, setKey] = useState('');
+  const [accessKey, setAccessKey] = useState('');
   // Modal state: null = closed, {} = adding a new device, {…device} = editing that device.
   const [editing, setEditing] = useState(null);
 
-  // On first render, load all devices from the API (the "retrieve all records" step).
-  useEffect(() => {
-    listDevices()
-      .then(setDevices)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
+  const unlock = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const candidate = key.trim();
+      setDevices(await listDevices(candidate));
+      setAccessKey(candidate);
+      setKey('');
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Wrap any async action: clear the old error, run it, capture a new error if thrown.
   // Keeps the try/catch out of each handler below.
@@ -52,10 +62,10 @@ export default function App() {
   const handleSave = (form) =>
     run(async () => {
       if (editing?._id) {
-        const updated = await updateDevice(editing._id, form);
+        const updated = await updateDevice(accessKey, editing._id, form);
         setDevices((d) => d.map((x) => (x._id === updated._id ? updated : x)));
       } else {
-        const created = await createDevice(form);
+        const created = await createDevice(accessKey, form);
         setDevices((d) => [created, ...d]);
       }
       setEditing(null);
@@ -64,7 +74,7 @@ export default function App() {
   // Inline status change from the dropdown in the table. Sends only { status }.
   const handleStatus = (device, status) =>
     run(async () => {
-      const updated = await updateDevice(device._id, { status });
+      const updated = await updateDevice(accessKey, device._id, { status });
       setDevices((d) => d.map((x) => (x._id === updated._id ? updated : x)));
     });
 
@@ -72,7 +82,7 @@ export default function App() {
   const handleDelete = (device) => {
     if (!window.confirm(`Remove "${device.name}" (${device.serial}) from the fleet?`)) return;
     run(async () => {
-      await deleteDevice(device._id);
+      await deleteDevice(accessKey, device._id);
       setDevices((d) => d.filter((x) => x._id !== device._id));
     });
   };
@@ -86,6 +96,22 @@ export default function App() {
       .some((value) => String(value || '').toLowerCase().includes(query)))
   );
   const count = (s) => devices.filter((d) => d.status === s).length;
+
+  if (!accessKey) {
+    return (
+      <Container className="py-5" style={{ maxWidth: '32rem' }}>
+        <h1>FleetDesk</h1>
+        {error && <Alert variant="danger">{error}</Alert>}
+        <Form onSubmit={unlock}>
+          <Form.Group className="mb-3" controlId="fleetdesk-access-key">
+            <Form.Label>Access key</Form.Label>
+            <Form.Control type="password" value={key} onChange={(event) => setKey(event.target.value)} required />
+          </Form.Group>
+          <Button type="submit" disabled={loading || !key.trim()}>{loading ? 'Unlocking…' : 'Unlock inventory'}</Button>
+        </Form>
+      </Container>
+    );
+  }
 
   return (
     <>
@@ -163,21 +189,14 @@ export default function App() {
           </Alert>
         )}
 
-        {/* Spinner during the initial load, then the table */}
-        {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" />
-          </div>
-        ) : (
-          <div className="task-card">
-            <DeviceTable
-              devices={visible}
-              onEdit={setEditing}
-              onDelete={handleDelete}
-              onStatus={handleStatus}
-            />
-          </div>
-        )}
+        <div className="task-card">
+          <DeviceTable
+            devices={visible}
+            onEdit={setEditing}
+            onDelete={handleDelete}
+            onStatus={handleStatus}
+          />
+        </div>
 
         <footer className="app-footer">
           <div>Created by Rashad Abdulbarr</div>

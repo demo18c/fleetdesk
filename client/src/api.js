@@ -13,9 +13,9 @@ const BASE = import.meta.env.VITE_API_URL || '';
 // Shared request helper. Adds the JSON header, parses the response, and
 // turns non-2xx responses into thrown Errors so callers can use try/catch.
 // 204 (delete) has no body, so return null instead of trying to parse it.
-const request = async (path, options = {}) => {
+const request = async (path, key, options = {}) => {
   const res = await fetch(`${BASE}/api${path}`, {
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${key}` },
     ...options,
   });
   if (res.status === 204) return null;
@@ -25,15 +25,15 @@ const request = async (path, options = {}) => {
 };
 
 // READ all devices.
-export const listDevices = () => request('/devices');
+export const listDevices = (key) => request('/devices', key);
 
 // CREATE a device. `device` is the form object { name, serial, platform, osVersion, status, assignedTo, notes }.
-export const createDevice = (device) =>
-  request('/devices', { method: 'POST', body: JSON.stringify(device) });
+export const createDevice = (key, device) =>
+  request('/devices', key, { method: 'POST', body: JSON.stringify(device) });
 
 // UPDATE a device by id. `device` can be partial (e.g. just { status }).
-export const updateDevice = (id, device) =>
-  request(`/devices/${id}`, { method: 'PUT', body: JSON.stringify(device) });
+export const updateDevice = (key, id, device) =>
+  request(`/devices/${id}`, key, { method: 'PUT', body: JSON.stringify(device) });
 
 // DELETE a device by id.
-export const deleteDevice = (id) => request(`/devices/${id}`, { method: 'DELETE' });
+export const deleteDevice = (key, id) => request(`/devices/${id}`, key, { method: 'DELETE' });
