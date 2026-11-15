@@ -7,7 +7,6 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 import { rateLimit } from 'express-rate-limit';
-import { timingSafeEqual } from 'node:crypto';
 import mongoose from 'mongoose';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,15 +40,7 @@ app.use('/api', rateLimit({
   message: { error: 'Too many requests. Try again in a minute.' },
 }));
 
-const accessKey = Buffer.from(process.env.FLEETDESK_ACCESS_KEY || '');
-app.use('/api/devices', (req, res, next) => {
-  const key = Buffer.from(req.get('authorization')?.match(/^Bearer (.+)$/i)?.[1] || '');
-  if (!accessKey.length || key.length !== accessKey.length || !timingSafeEqual(key, accessKey)) {
-    res.set('WWW-Authenticate', 'Bearer');
-    return res.status(401).json({ error: 'A valid FleetDesk access key is required.' });
-  }
-  next();
-}, express.json({ limit: '16kb', inflate: false }), devicesRouter);
+app.use('/api/devices', express.json({ limit: '16kb', inflate: false }), devicesRouter);
 app.use('/api', (_req, res) => res.status(404).json({ error: 'API route not found.' }));
 
 // In production the React build is static files; serve them from this same
