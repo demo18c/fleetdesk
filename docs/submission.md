@@ -76,4 +76,6 @@ The AWS console confirms the FleetDesk `t3.small` instance is Running with Elast
 
 Keep the app running through the instructor's grading period; the supplied transcript does not specify an exact duration.
 
-See [verification results](verification.md) for completed checks.
+## Testing evidence
+
+The live CORS check confirmed that the API advertises the FleetDesk origin in its response. See the [CORS header capture and test results](verification.md#cors-verification--november-15-2026).

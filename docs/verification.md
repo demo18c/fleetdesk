@@ -18,3 +18,9 @@ These checks do not assert full production security or comprehensive CRUD regres
 - Final form-feedback build and deployment passed: [run 40514676294](https://github.com/demo18c/fleetdesk/actions/runs/40514676294).
 - Live add-device form displayed the HTTP 409 duplicate message inside the modal; canceled afterward without creating a record.
 - Search also verified assignee `warehouse`, platform `wear os`, device name `iphone`, and a no-match query.
+
+## CORS verification — November 15, 2026
+
+I sent two read-only requests to the live `GET /api/devices` endpoint with different `Origin` headers. Both returned HTTP 200 and advertised `Access-Control-Allow-Origin: https://fleetdesk.quiet-root.com`. The allowed origin matched the FleetDesk request. It differed from `https://example.org`, so a browser enforcing CORS would block JavaScript on that origin from reading the response. Direct HTTP clients can still call this public demo API.
+
+![Live FleetDesk API response headers for the app origin and an unlisted origin](screenshots/api-cors.png)
